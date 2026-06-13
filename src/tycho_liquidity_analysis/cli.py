@@ -8,6 +8,7 @@ from tycho_liquidity_analysis.config import PROCESSED_DATA_DIR, REPORTS_DIR, Set
 from tycho_liquidity_analysis.reports import (
     recommended_start_block_overrides,
     recommended_start_blocks,
+    write_all_venue_coverage,
     write_indexing_strategy,
     write_protocol_coverage,
     write_start_blocks,
@@ -56,6 +57,9 @@ def dune_export(normalize: bool = True) -> None:
 def build_reports(
     protocols_path: Path = PROCESSED_DATA_DIR / "protocol_volumes.parquet",
     pools_path: Path = PROCESSED_DATA_DIR / "top_pools.parquet",
+    all_venue_path: Path = PROCESSED_DATA_DIR / "all_venue_coverage.parquet",
+    non_tycho_path: Path = PROCESSED_DATA_DIR / "non_tycho_venue_breakdown.parquet",
+    aggregator_path: Path = PROCESSED_DATA_DIR / "aggregator_orderflow_breakdown.parquet",
     tycho_estimates_path: Path = PROCESSED_DATA_DIR / "tycho_indexing_estimates.parquet",
     reports_dir: Path = REPORTS_DIR,
 ) -> None:
@@ -64,12 +68,22 @@ def build_reports(
 
     protocols = pl.read_parquet(protocols_path)
     pools = pl.read_parquet(pools_path)
+    all_venue = pl.read_parquet(all_venue_path) if all_venue_path.exists() else pl.DataFrame()
+    non_tycho = pl.read_parquet(non_tycho_path) if non_tycho_path.exists() else pl.DataFrame()
+    aggregator = pl.read_parquet(aggregator_path) if aggregator_path.exists() else pl.DataFrame()
     estimates = (
         pl.read_parquet(tycho_estimates_path) if tycho_estimates_path.exists() else pl.DataFrame()
     )
 
     write_protocol_coverage(protocols, reports_dir / "protocol_coverage.md")
     write_top_pools(pools, reports_dir / "top_pools.csv")
+    if not all_venue.is_empty() and not non_tycho.is_empty() and not aggregator.is_empty():
+        write_all_venue_coverage(
+            all_venue,
+            non_tycho,
+            aggregator,
+            reports_dir / "all_venue_coverage.md",
+        )
     if not estimates.is_empty():
         write_indexing_strategy(protocols, estimates, reports_dir / "indexing_strategy.md")
         write_start_blocks(

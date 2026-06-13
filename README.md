@@ -53,6 +53,7 @@ Optional variables:
 ## Outputs
 
 - `reports/protocol_coverage.md`
+- `reports/all_venue_coverage.md`
 - `reports/top_pools.csv`
 - `reports/indexing_strategy.md`
 - `reports/start_blocks.yaml`

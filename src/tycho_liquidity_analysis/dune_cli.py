@@ -71,6 +71,24 @@ QUERY_SPECS = [
         sql_path=REPO_ROOT / "queries" / "indexing_strategy_inputs.sql",
         description="Dune volume inputs joined to Tycho extractor start-block metadata.",
     ),
+    QuerySpec(
+        key="all_venue_coverage",
+        name="Tycho Liquidity Coverage - All Venue Coverage",
+        sql_path=REPO_ROOT / "queries" / "all_venue_coverage.sql",
+        description="Coverage of current Tycho target protocols against all Dune dex.trades target-token venues.",
+    ),
+    QuerySpec(
+        key="non_tycho_venue_breakdown",
+        name="Tycho Liquidity Coverage - Non-Tycho Venue Breakdown",
+        sql_path=REPO_ROOT / "queries" / "non_tycho_venue_breakdown.sql",
+        description="Largest non-Tycho venue/project/pair buckets in Dune dex.trades.",
+    ),
+    QuerySpec(
+        key="aggregator_orderflow_breakdown",
+        name="Tycho Liquidity Coverage - Aggregator Orderflow",
+        sql_path=REPO_ROOT / "queries" / "aggregator_orderflow_breakdown.sql",
+        description="Aggregator/orderflow layer volume, distinct from underlying DEX venue liquidity.",
+    ),
 ]
 
 
@@ -336,6 +354,130 @@ VISUALIZATION_SPECS = [
                 {
                     "name": "volume_30d_usd",
                     "title": "30d Volume",
+                    "type": "normal",
+                    "alignContent": "right",
+                    "isHidden": False,
+                },
+            ],
+        },
+    ),
+    VisualizationSpec(
+        key="all_venue_coverage_table",
+        query_key="all_venue_coverage",
+        name="All Dune Venue Coverage",
+        type="table",
+        options={
+            "itemsPerPage": 10,
+            "columns": [
+                {
+                    "name": "category",
+                    "title": "Category",
+                    "type": "normal",
+                    "alignContent": "left",
+                    "isHidden": False,
+                },
+                {
+                    "name": "volume_30d_usd",
+                    "title": "30d Volume",
+                    "type": "normal",
+                    "alignContent": "right",
+                    "isHidden": False,
+                },
+                {
+                    "name": "share_30d",
+                    "title": "30d Share",
+                    "type": "normal",
+                    "alignContent": "right",
+                    "isHidden": False,
+                },
+            ],
+        },
+    ),
+    VisualizationSpec(
+        key="non_tycho_venue_table",
+        query_key="non_tycho_venue_breakdown",
+        name="Largest Non-Tycho Venue Buckets",
+        type="table",
+        options={
+            "itemsPerPage": 25,
+            "columns": [
+                {
+                    "name": "category",
+                    "title": "Category",
+                    "type": "normal",
+                    "alignContent": "left",
+                    "isHidden": False,
+                },
+                {
+                    "name": "project",
+                    "title": "Project",
+                    "type": "normal",
+                    "alignContent": "left",
+                    "isHidden": False,
+                },
+                {
+                    "name": "version",
+                    "title": "Version",
+                    "type": "normal",
+                    "alignContent": "left",
+                    "isHidden": False,
+                },
+                {
+                    "name": "token_pair",
+                    "title": "Pair",
+                    "type": "normal",
+                    "alignContent": "left",
+                    "isHidden": False,
+                },
+                {
+                    "name": "volume_30d_usd",
+                    "title": "30d Volume",
+                    "type": "normal",
+                    "alignContent": "right",
+                    "isHidden": False,
+                },
+            ],
+        },
+    ),
+    VisualizationSpec(
+        key="aggregator_orderflow_table",
+        query_key="aggregator_orderflow_breakdown",
+        name="Aggregator / Orderflow Layer",
+        type="table",
+        options={
+            "itemsPerPage": 25,
+            "columns": [
+                {
+                    "name": "project",
+                    "title": "Project",
+                    "type": "normal",
+                    "alignContent": "left",
+                    "isHidden": False,
+                },
+                {
+                    "name": "version",
+                    "title": "Version",
+                    "type": "normal",
+                    "alignContent": "left",
+                    "isHidden": False,
+                },
+                {
+                    "name": "trades",
+                    "title": "Trades",
+                    "type": "normal",
+                    "alignContent": "right",
+                    "isHidden": False,
+                },
+                {
+                    "name": "volume_30d_usd",
+                    "title": "30d Volume",
+                    "type": "normal",
+                    "alignContent": "right",
+                    "isHidden": False,
+                },
+                {
+                    "name": "share_30d",
+                    "title": "30d Share",
                     "type": "normal",
                     "alignContent": "right",
                     "isHidden": False,
@@ -619,7 +761,10 @@ def normalize_exports(raw_dir: Path = RAW_DATA_DIR) -> dict[str, Path]:
     PROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
     outputs: dict[str, Path] = {}
     aliases = {
+        "aggregator_orderflow_breakdown": "aggregator_orderflow_breakdown",
+        "all_venue_coverage": "all_venue_coverage",
         "protocol_volume": "protocol_volumes",
+        "non_tycho_venue_breakdown": "non_tycho_venue_breakdown",
         "top_pools": "top_pools",
         "token_pair_coverage": "token_pair_coverage",
         "indexing_inputs": "indexing_inputs",

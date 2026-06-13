@@ -31,6 +31,55 @@ def write_protocol_coverage(protocols: pl.DataFrame, path: Path) -> None:
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def write_all_venue_coverage(
+    all_venue: pl.DataFrame,
+    non_tycho: pl.DataFrame,
+    aggregator_orderflow: pl.DataFrame,
+    path: Path,
+) -> None:
+    tycho_share = (
+        all_venue.filter(pl.col("category") == "tycho_indexed_target")
+        .select(pl.col("share_30d").sum())
+        .item()
+    )
+    other_defi_share = (
+        all_venue.filter(pl.col("category") == "other_onchain_defi_venue")
+        .select(pl.col("share_30d").sum())
+        .item()
+    )
+    rfq_share = (
+        all_venue.filter(pl.col("category") == "rfq_intent_orderflow_or_api")
+        .select(pl.col("share_30d").sum())
+        .item()
+    )
+
+    lines = [
+        "# All-Venue Coverage",
+        "",
+        "This report compares the current Tycho target protocol set against all Ethereum "
+        "`dex.trades` rows for the target token universe. This is broader than the dashboard "
+        "protocol-comparison query, which only compares the selected target protocols.",
+        "",
+        "## Summary",
+        "",
+        f"- Current Tycho target protocols cover approximately {tycho_share:.2%} of 30d target-token venue volume.",
+        f"- Other onchain DeFi venues account for approximately {other_defi_share:.2%}.",
+        f"- RFQ/intent/API-style venue rows account for approximately {rfq_share:.2%}.",
+        "- Aggregator/orderflow tables are a separate layer and should not be interpreted as underlying pool liquidity.",
+        "",
+        "## Category Breakdown",
+        "",
+        all_venue.write_csv(),
+        "## Largest Non-Tycho Venue Buckets",
+        "",
+        non_tycho.head(40).write_csv(),
+        "## Aggregator / Orderflow Layer",
+        "",
+        aggregator_orderflow.head(30).write_csv(),
+    ]
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
 def write_top_pools(pools: pl.DataFrame, path: Path) -> None:
     score_pools(pools).write_csv(path)
 
@@ -76,8 +125,8 @@ def write_indexing_strategy(
                 "- Start the first router demo with `uniswap_v4` and `ekubo_v2` as the core reduced set.",
                 f"- That set accounts for approximately {share:.2%} of target 30d Dune volume.",
                 f"- Observed catch-up estimate from configured start blocks is up to {max_hours:.1f} hours.",
-                f"- To target 10h, override core protocol start blocks to no earlier than approximately {proposed}.",
-                "- Seed older must-have pools separately if route quality depends on pools created before the override.",
+                "- Starting late is currently unacceptable because it is not guaranteed to reconstruct valid state.",
+                f"- The timing-only 10h cutoff would be approximately {proposed}, but it is not an actionable config.",
                 "",
             ]
         )
