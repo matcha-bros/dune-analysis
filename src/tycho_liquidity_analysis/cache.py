@@ -18,4 +18,3 @@ def read_cached_table(path: Path) -> pl.DataFrame:
 def write_parquet(df: pl.DataFrame, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     df.write_parquet(path)
-

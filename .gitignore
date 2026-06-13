@@ -8,8 +8,8 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+data/dune_manifest.json
 reports/*.csv
 reports/*.md
 reports/*.yaml
 !reports/README.md
-

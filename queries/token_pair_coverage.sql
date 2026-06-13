@@ -1,24 +1,44 @@
--- Token-pair coverage for first-pass target universe.
-with trades as (
+-- Token-pair coverage for the first-pass target token universe.
+with mapped_trades as (
     select
-        project as protocol,
+        case
+            when project = 'uniswap' and version = '4' then 'uniswap_v4'
+            when project = 'ekubo' then 'ekubo_v2'
+            when project = 'uniswap' and version = '3' then 'uniswap_v3'
+            when project = 'curve' then 'curve'
+            when project = 'balancer' and version = '2' then 'balancer_v2'
+            when project = 'balancer' and version = '3' then 'balancer_v3_uncovered'
+            when project = 'uniswap' and version = '2' then 'uniswap_v2'
+            when project = 'sushiswap' and version = '2' then 'sushiswap_v2'
+            when project = 'pancakeswap' and version = '2' then 'pancakeswap_v2'
+            when project = 'pancakeswap' and version = '3' then 'pancakeswap_v3'
+        end as protocol,
         least(token_bought_symbol, token_sold_symbol) as token0_symbol,
         greatest(token_bought_symbol, token_sold_symbol) as token1_symbol,
         amount_usd,
-        block_time
+        block_date
     from dex.trades
     where blockchain = 'ethereum'
-      and block_time >= now() - interval '30' day
+      and block_date >= current_date - interval '30' day
+      and amount_usd is not null
+      and (
+        (project = 'uniswap' and version in ('2', '3', '4'))
+        or project = 'ekubo'
+        or project = 'curve'
+        or (project = 'balancer' and version in ('2', '3'))
+        or (project = 'sushiswap' and version = '2')
+        or (project = 'pancakeswap' and version in ('2', '3'))
+      )
 )
 select
     token0_symbol,
     token1_symbol,
     protocol,
-    sum(case when block_time >= now() - interval '7' day then amount_usd else 0 end) as volume_7d_usd,
+    sum(if(block_date >= current_date - interval '7' day, amount_usd, 0)) as volume_7d_usd,
     sum(amount_usd) as volume_30d_usd
-from trades
-where token0_symbol in ('WETH', 'USDC', 'USDT', 'DAI', 'WBTC', 'wstETH', 'cbBTC', 'USDe', 'sUSDe', 'weETH', 'ezETH', 'rsETH', 'BAL', 'UNI', 'LINK', 'AAVE')
+from mapped_trades
+where protocol is not null
+  and token0_symbol in ('WETH', 'USDC', 'USDT', 'DAI', 'WBTC', 'wstETH', 'cbBTC', 'USDe', 'sUSDe', 'weETH', 'ezETH', 'rsETH', 'BAL', 'UNI', 'LINK', 'AAVE')
   and token1_symbol in ('WETH', 'USDC', 'USDT', 'DAI', 'WBTC', 'wstETH', 'cbBTC', 'USDe', 'sUSDe', 'weETH', 'ezETH', 'rsETH', 'BAL', 'UNI', 'LINK', 'AAVE')
 group by 1, 2, 3
 order by volume_30d_usd desc;
-

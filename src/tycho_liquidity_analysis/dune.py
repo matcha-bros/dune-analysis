@@ -19,4 +19,3 @@ def validate_auth() -> None:
     if not rows or rows[0].get("ok") != 1:
         msg = f"Unexpected Dune auth check result: {rows}"
         raise RuntimeError(msg)
-

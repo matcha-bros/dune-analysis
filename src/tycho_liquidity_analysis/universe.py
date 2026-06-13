@@ -28,4 +28,3 @@ FIRST_PASS_PROTOCOLS = [
     "pancakeswap_v2",
     "pancakeswap_v3",
 ]
-

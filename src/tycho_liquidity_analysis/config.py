@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     dune_api_key: str | None = None
     eth_rpc_url: str | None = None
     tycho_url: str = "http://localhost:4242"
+    tycho_simulation_dir: Path = Path(
+        "/home/leovigna/Documents/projects/matcha-bros/tycho-mainnet-simulation"
+    )
 
     model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore")
-

@@ -1,2 +1,1 @@
 """Tycho liquidity coverage analysis."""
-

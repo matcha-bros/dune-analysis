@@ -23,14 +23,28 @@ Optional variables:
 1. Validate Dune auth:
 
    ```bash
-   uv run tycho-liquidity validate-auth
+   uv run tycho-liquidity dune validate
    ```
 
-2. Run targeted Dune queries from `queries/` and cache the results under `data/raw/`.
+2. Publish or update the public Dune dashboard:
 
-3. Normalize cached outputs to Parquet under `data/processed/`.
+   ```bash
+   uv run tycho-liquidity dune publish
+   ```
 
-4. Generate reports:
+3. Run saved Dune queries and cache the results under `data/raw/`:
+
+   ```bash
+   uv run tycho-liquidity dune export
+   ```
+
+4. Parse local Tycho indexing logs:
+
+   ```bash
+   uv run tycho-liquidity parse-tycho-logs
+   ```
+
+5. Generate reports:
 
    ```bash
    uv run tycho-liquidity build-reports
@@ -43,3 +57,10 @@ Optional variables:
 - `reports/indexing_strategy.md`
 - `reports/start_blocks.yaml`
 
+## Dashboard
+
+The public dashboard is published at:
+
+https://dune.com/leovigna/tycho-liquidity-coverage-analysis
+
+Saved Dune object IDs are stored in `data/dune_manifest.json`, which is intentionally ignored by Git.

@@ -6,6 +6,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "dune-client>=1.7.0",
+    "ipykernel>=6.29.0",
+    "jupyter>=1.1.0",
+    "nbformat>=5.10.0",
+    "plotly>=6.1.0",
     "polars>=1.30.0",
     "pyarrow>=20.0.0",
     "pydantic-settings>=2.9.0",
@@ -33,4 +37,3 @@ target-version = "py311"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
