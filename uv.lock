@@ -2542,6 +2542,7 @@ dependencies = [
     { name = "pyarrow" },
     { name = "pydantic-settings" },
     { name = "python-dotenv" },
+    { name = "requests" },
     { name = "ruamel-yaml" },
     { name = "typer" },
 ]
@@ -2563,6 +2564,7 @@ requires-dist = [
     { name = "pyarrow", specifier = ">=20.0.0" },
     { name = "pydantic-settings", specifier = ">=2.9.0" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
+    { name = "requests", specifier = ">=2.31.0" },
     { name = "ruamel-yaml", specifier = ">=0.18.0" },
     { name = "typer", specifier = ">=0.16.0" },
 ]

@@ -5,6 +5,13 @@ import typer
 
 from tycho_liquidity_analysis import dune, dune_cli
 from tycho_liquidity_analysis.config import PROCESSED_DATA_DIR, REPORTS_DIR, Settings
+from tycho_liquidity_analysis.lifi_topology import (
+    DEFAULT_SENDER,
+    USDC,
+    WETH,
+    TopologyArgs,
+    analyze_lifi_topology,
+)
 from tycho_liquidity_analysis.reports import (
     recommended_start_block_overrides,
     recommended_start_blocks,
@@ -120,3 +127,27 @@ def parse_tycho_logs(
     for key, frame in frames.items():
         frame.write_parquet(outputs[key])
     typer.echo(f"Wrote Tycho indexing data to {output_dir}")
+
+
+@app.command()
+def lifi_topology(
+    amount: int = typer.Option(1_000_000_000, help="Raw input amount. Default is 1000 USDC."),
+    from_token: str = typer.Option(USDC, help="Input token address."),
+    to_token: str = typer.Option(WETH, help="Output token address."),
+    sender: str = typer.Option(DEFAULT_SENDER, help="Simulation sender with enough input balance."),
+    slippage: str = typer.Option("0.005", help="LI.FI quote slippage."),
+    gas: int = typer.Option(8_000_000, help="Tenderly swap simulation gas limit."),
+    save_prefix: str = typer.Option("", help="Optional prefix for saved quote and bundle JSON."),
+) -> None:
+    """Fetch a LI.FI quote, simulate it, and print realized swap topology."""
+    analyze_lifi_topology(
+        TopologyArgs(
+            from_token=from_token,
+            to_token=to_token,
+            amount=amount,
+            sender=sender,
+            slippage=slippage,
+            gas=gas,
+            save_prefix=save_prefix,
+        )
+    )

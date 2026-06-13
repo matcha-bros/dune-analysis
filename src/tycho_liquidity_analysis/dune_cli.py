@@ -89,6 +89,12 @@ QUERY_SPECS = [
         sql_path=REPO_ROOT / "queries" / "aggregator_orderflow_breakdown.sql",
         description="Aggregator/orderflow layer volume, distinct from underlying DEX venue liquidity.",
     ),
+    QuerySpec(
+        key="aggregator_route_topology_by_size",
+        name="Tycho Liquidity Coverage - Aggregator Route Topology By Size",
+        sql_path=REPO_ROOT / "queries" / "aggregator_route_topology_by_size.sql",
+        description="Aggregator transactions classified by underlying Tycho AMM, RFQ, or other venue rows.",
+    ),
 ]
 
 
