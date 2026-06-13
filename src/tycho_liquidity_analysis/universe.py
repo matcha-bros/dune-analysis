@@ -1,0 +1,31 @@
+TARGET_TOKENS = [
+    "WETH",
+    "USDC",
+    "USDT",
+    "DAI",
+    "WBTC",
+    "wstETH",
+    "cbBTC",
+    "USDe",
+    "sUSDe",
+    "weETH",
+    "ezETH",
+    "rsETH",
+    "BAL",
+    "UNI",
+    "LINK",
+    "AAVE",
+]
+
+FIRST_PASS_PROTOCOLS = [
+    "uniswap_v4",
+    "ekubo_v2",
+    "uniswap_v3",
+    "curve",
+    "balancer_v2",
+    "uniswap_v2",
+    "sushiswap_v2",
+    "pancakeswap_v2",
+    "pancakeswap_v3",
+]
+
